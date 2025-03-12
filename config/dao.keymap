@@ -7,6 +7,7 @@
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/bt.h>
 #include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/pointing.h>
 
 #define DEF 0
 #define LWR 1
@@ -26,46 +27,104 @@
 };
 
 / {
+    combos {
+        compatible = "zmk,combos";
+
+        Backspace_Combo {
+            bindings = <&kp BACKSPACE>;
+            key-positions = <38 39>;
+        };
+
+        MO_NAV_LAYER {
+            bindings = <&mo 2>;
+            key-positions = <37 40>;
+        };
+
+        MO_ADJUST_LAYER {
+            bindings = <&mo 4>;
+            key-positions = <36 41>;
+        };
+    };
+
+    macros {
+        nvim_tab_to_left: nvim_tab_to_left {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&kp ESC &kp G &kp T>;
+            label = "NVIM_TAB_TO_LEFT";
+        };
+
+        nvim_tab_to_right: nvim_tab_to_right {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&kp ESCAPE &kp G &kp LS(T)>;
+            label = "NVIM_TAB_TO_RIGHT";
+        };
+
+        tmux_win_overview: tmux_win_overview {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&kp LC(A) &kp W>;
+            label = "TMUX_WIN_OVERVIEW";
+        };
+
+        tmux_tab_to_right: tmux_tab_to_right {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&kp LC(A) &kp N>;
+            label = "TMUX_TAB_TO_RIGHT";
+        };
+
+        tmux_tab_to_left: tmux_tab_to_left {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&kp LC(A) &kp P>;
+            label = "TMUX_TAB_TO_LEFT";
+        };
+    };
+
     keymap {
         compatible = "zmk,keymap";
 
         default_layer {
             display-name = "MAIN";
             bindings = <
-&kp TAB         &kp Q  &kp W  &kp E      &kp R            &kp T      &kp Y      &kp U           &kp I             &kp O    &kp P     &kp MINUS
-&kp ESCAPE      &kp A  &kp S  &kp D      &kp F            &kp G      &kp H      &kp J           &kp K             &kp L    &kp SEMI  &kp ENTER
-&mt LALT EQUAL  &kp Z  &kp X  &kp C      &kp V            &kp B      &kp N      &kp M           &kp COMMA         &kp DOT  &kp FSLH  &mt RALT BSLH
-                              &lt 2 TAB  &mt LSHFT SPACE  &lt 1 RET  &lt 3 ESC  &mt RSHFT BSPC  &kp LEFT_CONTROL
+&kp TAB         &kp Q  &kp W  &kp E         &kp R      &kp T  &kp Y  &kp U       &kp I             &kp O    &kp P     &kp MINUS
+&kp ESCAPE      &kp A  &kp S  &kp D         &kp F      &kp G  &kp H  &kp J       &kp K             &kp L    &kp SEMI  &kp ENTER
+&mt LALT EQUAL  &kp Z  &kp X  &kp C         &kp V      &kp B  &kp N  &kp M       &kp COMMA         &kp DOT  &kp FSLH  &kp BACKSLASH
+                              &kp LEFT_GUI  &kp SPACE  &mo 1  &mo 3  &kp RSHIFT  &kp LEFT_CONTROL
             >;
         };
 
-        lower_layer {
+        NUM_NVIM_TMUX {
             display-name = "NUM+NVIM+TMUX";
             bindings = <
-&none  &none  &none  &none   &none   &none   &none   &kp N7        &kp N8   &kp N9  &kp LS(EQUAL)  &kp MINUS
-&none  &none  &none  &none   &none   &none   &none   &kp N4        &kp N5   &kp N6  &kp LS(N8)     &kp FSLH
-&none  &none  &none  &none   &none   &none   &none   &kp NUMBER_1  &kp N2   &kp N3  &kp EQUAL      &kp LS(NUMBER_6)
-                     &trans  &trans  &trans  &trans  &kp N0        &kp DOT
+&none  &none  &tmux_win_overview  &tmux_tab_to_left  &tmux_tab_to_right  &none   &none   &kp N7        &kp N8   &kp N9  &kp LS(EQUAL)  &kp MINUS
+&none  &none  &none               &nvim_tab_to_left  &nvim_tab_to_right  &none   &none   &kp N4        &kp N5   &kp N6  &kp LS(N8)     &kp FSLH
+&none  &none  &none               &none              &none               &none   &none   &kp NUMBER_1  &kp N2   &kp N3  &kp EQUAL      &kp LS(NUMBER_6)
+                                  &trans             &trans              &trans  &trans  &kp N0        &kp DOT
             >;
         };
 
-        raise_layer {
-            display-name = "NAVI+FUNCTION";
+        NAVIGATION_LAYER {
+            display-name = "NAVIGATION";
             bindings = <
-&none  &none  &none  &none   &none   &none  &kp HOME  &kp HOME       &kp END      &kp END    &kp PRINTSCREEN  &none
-&none  &none  &none  &none   &none   &none  &kp LEFT  &kp DOWN       &kp UP       &kp RIGHT  &none            &none
-&none  &none  &none  &none   &none   &none  &none     &kp PAGE_DOWN  &kp PAGE_UP  &none      &none            &none
-                     &trans  &trans  &none  &trans    &trans         &trans
+&none  &none      &none           &none         &none           &none            &kp HOME  &kp HOME       &kp END      &kp END    &kp PRINTSCREEN  &none
+&none  &mkp LCLK  &msc SCRL_LEFT  &msc SCRL_UP  &msc SCRL_DOWN  &msc SCRL_RIGHT  &kp LEFT  &kp DOWN       &kp UP       &kp RIGHT  &mkp RCLK        &none
+&none  &none      &none           &none         &none           &none            &none     &kp PAGE_DOWN  &kp PAGE_UP  &none      &none            &none
+                                  &trans        &trans          &none            &trans    &trans         &trans
             >;
         };
 
-        SpecialSymbols {
+        SYMBOL_LAYER {
             bindings = <
-&none  &kp SQT       &kp LS(DQT)   &kp LS(EXCL)   &kp LS(LBRC)  &kp LGUI       &kp LGUI  &kp LS(RBRC)  &none       &none     &kp LS(PLUS)  &kp DELETE
-&none  &kp LS(AMPS)  &kp LS(STAR)  &kp LS(DLLR)   &kp LGUI      &kp LS(TILDE)  &kp LGUI  &kp LS(RPAR)  &kp LS(AT)  &kp LGUI  &none         &none
-&none  &none         &none         &kp LS(CARET)  &kp LBKT      &kp LS(PRCNT)  &none     &kp RBKT      &none       &none     &none         &none
-                                   &trans         &trans        &trans         &trans    &trans        &trans
+&none  &kp SQT       &kp LS(DQT)   &kp LS(EXCL)   &kp LS(LBRC)  &kp LS(TILDE)  &none          &kp LS(RBRC)  &kp EQUAL   &none  &kp LS(PLUS)  &kp DELETE
+&none  &kp LS(AMPS)  &kp LS(STAR)  &kp LS(DLLR)   &kp LS(LPAR)  &kp LS(TILDE)  &kp LS(POUND)  &kp LS(RPAR)  &kp LS(AT)  &none  &none         &none
+&none  &none         &none         &kp LS(CARET)  &kp LBKT      &kp LS(PRCNT)  &none          &kp RBKT      &none       &none  &none         &none
+                                   &trans         &trans        &trans         &trans         &trans        &trans
             >;
+
+            label = "Symbols";
         };
 
         adjust_layer {
