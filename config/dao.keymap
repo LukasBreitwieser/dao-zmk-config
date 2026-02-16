@@ -4,6 +4,10 @@
  * SPDX-License-Identifier: MIT
  */
 
+// Use the following visual key editor:
+// https://nickcoutsos.github.io/keymap-editor/
+// select clipboard and paste the whole file
+
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/bt.h>
 #include <dt-bindings/zmk/keys.h>
@@ -42,7 +46,7 @@
 
         MO_ADJUST_LAYER {
             bindings = <&mo 4>;
-            key-positions = <36 41>;
+            key-positions = <36 40>;
         };
     };
 
